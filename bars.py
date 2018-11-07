@@ -42,9 +42,9 @@ def get_smallest_bar(bars_list):
     return smallest_bar
 
 
-def convert_str_to_coodinates(str):
-    strings = str.split(', ')
-    if not len(strings) == 2:
+def convert_str_to_coodinates(string):
+    substrings = string.split(', ')
+    if not len(substrings) == 2:
         return None
     try:
         longitude = float(strings[0])
