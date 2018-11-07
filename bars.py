@@ -60,7 +60,8 @@ def get_bar_coordinates(bar):
 
 def get_closest_bar(data, current_position):
     for bar in bars_list:
-        bar_distance = distance.distance(get_bar_coordinates(bar), current_position).m
+        bar_distance = distance.distance(get_bar_coordinates(bar), 
+                                         current_position).m
         bar["geometry"]["distance"] = bar_distance
     closest_bar = min(bars_list, key=get_bar_distance)
     return closest_bar
@@ -72,8 +73,8 @@ def print_bar_info(bar):
     print('    Address: {address}'.format(address=get_bar_address(bar)))
     try:
         print('    Distance: {0:.2f} m'.format(get_bar_distance(bar)))
-    except:
-        pass
+    finally:
+        print()
 
 if __name__ == '__main__':
     if not len(sys.argv) > 1:
@@ -88,7 +89,8 @@ if __name__ == '__main__':
     smallest_bar = get_smallest_bar(bars_list)
     print('The smallest bar is')
     print_bar_info(smallest_bar)
-    input_str = input('Input your coordinates in format (for example "36.234567, 45.345678"):\n')
+    input_str = input('Input your coordinates '
+                      '(for example "36.234567, 45.345678"):\n')
     my_coordinates = convert_str_to_coodinates(input_str)
     if my_coordinates is None:
         exit("Can't find the closest bar! Input coordinates are incorrect.")
