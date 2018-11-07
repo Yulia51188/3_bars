@@ -37,7 +37,7 @@ def get_biggest_bar(bars_list):
     return biggest_bar
 
 
-def get_smallest_bar(data):
+def get_smallest_bar(bars_list):
     smallest_bar = min(bars_list, key=get_seats_count)
     return smallest_bar
 
@@ -50,7 +50,7 @@ def convert_str_to_coodinates(str):
         longitude = float(strings[0])
         latitude = float(strings[1])
         return [longitude, latitude]
-    except:
+    except ValueError:
         return None
 
 
@@ -58,9 +58,9 @@ def get_bar_coordinates(bar):
     return bar["geometry"]["coordinates"]
 
 
-def get_closest_bar(data, current_position):
+def get_closest_bar(bars_list, current_position):
     for bar in bars_list:
-        bar_distance = distance.distance(get_bar_coordinates(bar), 
+        bar_distance = distance.distance(get_bar_coordinates(bar),
                                          current_position).m
         bar["geometry"]["distance"] = bar_distance
     closest_bar = min(bars_list, key=get_bar_distance)
