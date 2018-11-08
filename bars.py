@@ -6,6 +6,7 @@ from geopy import distance
 
 def load_data_from_file(filepath):
     if not os.path.exists(filepath):
+        print("File doesn't exist")
         return None
     with open(filepath, 'r') as file:
         str_data = file.read()
@@ -13,6 +14,7 @@ def load_data_from_file(filepath):
         python_object = json.loads(str_data)
         return python_object
     except ValueError:
+        print("Data in the file is not JSON.")
         return None
 
 
@@ -28,10 +30,6 @@ def get_bar_address(bar):
     return bar["properties"]["Attributes"]["Address"]
 
 
-def get_bar_distance(bar):
-    return bar["geometry"]["distance"]
-
-
 def get_biggest_bar(bars_list):
     biggest_bar = max(bars_list, key=get_seats_count)
     return biggest_bar
@@ -42,14 +40,14 @@ def get_smallest_bar(bars_list):
     return smallest_bar
 
 
-def convert_str_to_coodinates(string):
-    substrings = string.split(', ')
-    if not len(substrings) == 2:
+def convert_str_to_coodinates(str):
+    strings = str.split(', ')
+    if not len(strings) == 2:
         return None
     try:
         longitude = float(strings[0])
         latitude = float(strings[1])
-        return [longitude, latitude]
+        return longitude, latitude
     except ValueError:
         return None
 
@@ -59,11 +57,11 @@ def get_bar_coordinates(bar):
 
 
 def get_closest_bar(bars_list, current_position):
-    for bar in bars_list:
-        bar_distance = distance.distance(get_bar_coordinates(bar),
-                                         current_position).m
-        bar["geometry"]["distance"] = bar_distance
-    closest_bar = min(bars_list, key=get_bar_distance)
+    closest_bar = min(bars_list,
+                      key=lambda bar: distance.distance(
+                            get_bar_coordinates(bar),
+                            current_position).m
+                      )
     return closest_bar
 
 
@@ -71,17 +69,14 @@ def print_bar_info(bar):
     print('    Name: {name}'.format(name=get_bar_name(bar)))
     print('    Seats count: {seats}'.format(seats=get_seats_count(bar)))
     print('    Address: {address}'.format(address=get_bar_address(bar)))
-    try:
-        print('    Distance: {0:.2f} m'.format(get_bar_distance(bar)))
-    finally:
-        print()
+    print()
 
 if __name__ == '__main__':
     if not len(sys.argv) > 1:
         exit('No filepath received as argument')
     data_dict = load_data_from_file(sys.argv[1])
     if data_dict is None:
-        exit("Can't read data from file")
+        exit("Can't read data about bars")
     bars_list = data_dict["features"]
     biggest_bar = get_biggest_bar(bars_list)
     print('The biggest bar is')
