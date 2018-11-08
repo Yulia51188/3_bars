@@ -5,16 +5,12 @@ from geopy import distance
 
 
 def load_data_from_file(filepath):
-    if not os.path.exists(filepath):
-        print("File doesn't exist")
-        return None
     with open(filepath, 'r') as file:
         str_data = file.read()
     try:
         python_object = json.loads(str_data)
         return python_object
     except ValueError:
-        print("Data in the file is not JSON.")
         return None
 
 
@@ -57,11 +53,13 @@ def get_bar_coordinates(bar):
 
 
 def get_closest_bar(bars_list, current_position):
-    closest_bar = min(bars_list,
-                      key=lambda bar: distance.distance(
-                            get_bar_coordinates(bar),
-                            current_position).m
-                      )
+    closest_bar = min(
+        bars_list,
+        key=lambda bar: distance.distance(
+            get_bar_coordinates(bar),
+            current_position
+        ).m
+    )
     return closest_bar
 
 
@@ -74,6 +72,8 @@ def print_bar_info(bar):
 if __name__ == '__main__':
     if not len(sys.argv) > 1:
         exit('No filepath received as argument')
+    if not os.path.exists(sys.argv[1]):
+        exit("File doesn't exist")
     data_dict = load_data_from_file(sys.argv[1])
     if data_dict is None:
         exit("Can't read data about bars")
